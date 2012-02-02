@@ -1,0 +1,105 @@
+<!DOCTYPE HTML>
+<html>
+  
+  <head>
+    <script type="text/javascript">
+      // Global variables
+      var ballX = 400; // Ball x position.
+      var ballY = 300; // Ball y position.
+      var ballDX = 2; // Change in ball x position.
+      var ballDY = 4; // Change in ball y position.
+      var boardX = 800; // Board width.
+      var boardY = 600; // Board height.
+      var paddleX = 400; // Initial paddle location.
+      var paddleH = 10; // Paddle height.
+      var paddleD = boardY - paddleH; // Paddle depth.
+	  var paddleW = 150; // Paddle width.
+	  var ballRadius =15;
+
+	  function startGame() {
+	  	  drawGameSVG();
+	  }
+
+      // This function is called on page load.
+      function drawGameSVG() {
+
+        // Play the game until the ball stops.
+        gameLoop = setInterval(drawBall, 16);
+
+        // Add keyboard listener.
+        window.addEventListener('keydown', whatKey, true);
+      }
+
+      function drawBall() {
+
+
+        // Change the ball location.
+        ballX += ballDX;
+        ballY += ballDY;
+        ball.setAttribute("cx", ballX);
+        ball.setAttribute("cy", ballY);
+
+
+        // Bounce on a left or right edge.
+        if (ballX + ballDX > boardX - ballRadius || ballX + ballDX < ballRadius ) ballDX = -ballDX;
+
+        // If ball hits the top, bounce it. 
+		if (ballY + ballDY < ballRadius ) ballDY = -ballDY;
+
+        // If the ball hits the bottom, check see if it hits a paddle.
+        else if (ballY + ballDY > boardY - ballRadius ) {
+          // If the ball hits the paddle, bounce it.
+          if (ballX > paddleX && ballX < paddleX + paddleW) ballDY = -ballDY;
+          // Otherwise the game is over.
+          else {
+            clearInterval(gameLoop);
+            alert("Game over!");
+          }
+        }
+      }
+
+
+
+// Get key press.
+
+// todo get paddle position from the server.
+
+      function whatKey(evt) {
+
+        switch (evt.keyCode) {
+          // Left arrow.
+        case 37:
+          paddleX = paddleX - 20;
+          if (paddleX < 0) paddleX = 0;
+          paddle.setAttribute("x", paddleX);
+          break;
+
+          // Right arrow.
+        case 39:
+          paddleX = paddleX + 20;
+          if (paddleX > boardX - paddleW) paddleX = boardX - paddleW;
+          paddle.setAttribute("x", paddleX);
+          break;
+        }
+      }
+    </script>
+  </head>
+  
+  <body onload="drawGameSVG()">
+    <h1>
+      Ping2Pong : Return of the Pong by Atari 
+    </h1>
+    <!-- Create the SVG pane. -->
+    <svg xmlns="http://www.w3.org/2000/svg" height="600" width="800">
+      <!-- Create the board. -->
+      <rect x="1" y="1" width="798" height="598" fill="thistle" id="bpard" />
+      <!-- Create the ball. -->
+      <circle cx="400" cy="300" r="15" fill="tomato" id="ball" />
+      <!-- Create the paddle. -->
+      <rect x="400" y="590" width="150" height="10" fill="navy" id="paddle"
+      />
+    </svg>
+  </body>
+
+</html>
+
